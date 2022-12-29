@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      body {
+        margin: 0;
+        padding-bottom: 3rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+
+      #form {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        height: 3rem;
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+      }
+      #input {
+        border: none;
+        padding: 0 1rem;
+        flex-grow: 1;
+        border-radius: 2rem;
+        margin: 0.25rem;
+      }
+      #input:focus {
+        outline: none;
+      }
+      #form > button {
+        background: #333;
+        border: none;
+        padding: 0 1rem;
+        margin: 0.25rem;
+        border-radius: 3px;
+        outline: none;
+        color: #fff;
+      }
+
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      #messages > li {
+        padding: 0.5rem 1rem;
+        color: #fff;
+        background-color: #00000075;
+      }
+      #messages > li:nth-child(odd) {
+        background: #ffffff00;
+      }
+      .left_side {
+        text-align: right;
+      }
+      .bg_image {
+        background: url("https://global-uploads.webflow.com/5fad86e2327507cecea2d5e8/61e845ab587ff859173e3ae7_Press%20Release%20%20cheemsinu%20(Coinzilla).jpg");
+        background-repeat: no-repeat;
+        /* Full height */
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body class="bg_image">
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <!-- Socket io -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      var socket = io();
+
+      // event to ensure that, connection has made to server
+      socket.on("client_connected", () => {
+        window.alert("Connection has made to server");
+      });
+
+      var form = document.getElementById("form");
+      var input = document.getElementById("input");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (input.value) {
+          // Save input to user left side before sending to server
+          var item = document.createElement("li");
+          item.className = "left_side";
+          item.textContent = input.value;
+          messages.appendChild(item);
+
+          // Emit the event
+          socket.emit("chat_message", input.value);
+          input.value = "";
+        }
+      });
+
+      // Received message from the server
+      socket.on("chat_message", function (msg) {
+        var item = document.createElement("li");
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      // Received welcome event
+      // socket.on('welcome', data => {
+      //   console.log({data})
+      //   data && window.alert(data);
+      // })
+    </script>
+  </body>
+</html>
