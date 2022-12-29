@@ -1,0 +1,5 @@
+# Note
+* Please note that broadcasting is a server-only feature.
+
+# Caution
+* Clients that are currently disconnected (or in the process of reconnecting) won't receive the event. Storing this event somewhere (in a database, for example) is up to you, depending on your use case.
